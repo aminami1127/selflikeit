@@ -12,10 +12,12 @@ co(function* () {
   var posts = yield posts.find({});
 });
 
+
 module.exports.all = function* all(next) {
   if ('GET' != this.method) return yield next;
   this.body = yield posts.find({});
 };
+
 
 module.exports.fetch = function* fetch(id, next) {
   if ('GET' != this.method) return yield next;
@@ -29,6 +31,7 @@ module.exports.fetch = function* fetch(id, next) {
   this.body = yield post;
 };
 
+
 module.exports.add = function* add(data, next) {
   if ('POST' != this.method) return yield next;
   var post = yield parse.json(this, {
@@ -40,6 +43,7 @@ module.exports.add = function* add(data, next) {
   }
   this.body = 'Done!';
 };
+
 
 module.exports.modify = function* modify(id, next) {
   if ('PUT' != this.method) return yield next;
@@ -67,6 +71,7 @@ module.exports.modify = function* modify(id, next) {
     this.body = "Done";
   }
 };
+
 
 module.exports.remove = function* remove(id, next) {
   if ('DELETE' != this.method) return yield next;

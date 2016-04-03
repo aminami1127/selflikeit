@@ -19,18 +19,14 @@ module.exports.all = function* all(next) {
 
 module.exports.fetch = function* fetch(id, next) {
   if ('GET' != this.method) return yield next;
-  // Quick hack.
-  if(id === ""+parseInt(id, 10)){
-    var post = yield posts.find({}, {
-      'skip': id - 1,
-      'limit': 1
-    });
-    if (post.length === 0) {
-      this.throw(404, 'post with id = ' + id + ' was not found');
-    }
-    this.body = yield post;
+  var post = yield posts.find(
+    {'_id': posts.id(id)},
+    {'limit': 1}
+  );
+  if (post.length === 0) {
+    this.throw(404, 'post with id = ' + id + ' was not found');
   }
-
+  this.body = yield post;
 };
 
 module.exports.add = function* add(data, next) {
@@ -52,10 +48,10 @@ module.exports.modify = function* modify(id, next) {
     limit: '1kb'
   });
 
-  var post = yield posts.find({}, {
-    'skip': id - 1,
-    'limit': 1
-  });
+  var post = yield posts.find(
+      {'_id': posts.id(id)},
+      {'limit': 1}
+  );
 
   if (post.length === 0) {
     this.throw(404, 'post with id = ' + id + ' was not found');
@@ -75,10 +71,10 @@ module.exports.modify = function* modify(id, next) {
 module.exports.remove = function* remove(id, next) {
   if ('DELETE' != this.method) return yield next;
 
-  var post = yield posts.find({}, {
-    'skip': id - 1,
-    'limit': 1
-  });
+  var post = yield posts.find(
+      {'_id': posts.id(id)},
+      {'limit': 1}
+  );
 
   if (post.length === 0) {
     this.throw(404, 'post with id = ' + id + ' was not found');

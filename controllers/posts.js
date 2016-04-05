@@ -21,11 +21,9 @@ module.exports.all = function* all(next) {
 
 module.exports.fetch = function* fetch(id, next) {
   if ('GET' != this.method) return yield next;
-  var post = yield posts.find(
-    {'_id': posts.id(id)},
-    {'limit': 1}
-  );
-  if (post.length === 0) {
+  var post = yield posts.findById(id);
+
+  if (!post) {
     this.throw(404, 'post with id = ' + id + ' was not found');
   }
   this.body = yield post;
@@ -34,10 +32,9 @@ module.exports.fetch = function* fetch(id, next) {
 
 module.exports.add = function* add(data, next) {
   if ('POST' != this.method) return yield next;
-  var post = yield parse.json(this, {
-    limit: '1kb'
-  });
+  var post = yield parse.json(this, {limit: '1kb'});
   var inserted = yield posts.insert(post);
+
   if (!inserted) {
     this.throw(405, "The post couldn't be added.");
   }
@@ -47,23 +44,14 @@ module.exports.add = function* add(data, next) {
 
 module.exports.modify = function* modify(id, next) {
   if ('PUT' != this.method) return yield next;
+  var data = yield parse.json(this, {limit: '1kb'});
+  var post = yield posts.findById(id);
 
-  var data = yield parse.json(this, {
-    limit: '1kb'
-  });
-
-  var post = yield posts.find(
-      {'_id': posts.id(id)},
-      {'limit': 1}
-  );
-
-  if (post.length === 0) {
+  if (!post) {
     this.throw(404, 'post with id = ' + id + ' was not found');
   }
 
-  var updated = posts.update(post[0], {
-    $set: data
-  });
+  var updated = posts.updateById(id, {$set: data});
 
   if (!updated) {
     this.throw(405, "Unable to update.");
@@ -76,16 +64,13 @@ module.exports.modify = function* modify(id, next) {
 module.exports.remove = function* remove(id, next) {
   if ('DELETE' != this.method) return yield next;
 
-  var post = yield posts.find(
-      {'_id': posts.id(id)},
-      {'limit': 1}
-  );
+  var post = yield posts.findById(id);
 
-  if (post.length === 0) {
+  if (!post) {
     this.throw(404, 'post with id = ' + id + ' was not found');
   }
 
-  var removed = posts.remove(post[0]);
+  var removed = posts.remove({'_id': id});
 
   if (!removed) {
     this.throw(405, "Unable to delete.");

@@ -38,7 +38,7 @@ module.exports.add = function* add(data, next) {
   if (!inserted) {
     this.throw(405, "The post couldn't be added.");
   }
-  this.body = 'Done!';
+  this.body = inserted;
 };
 
 
@@ -51,12 +51,12 @@ module.exports.modify = function* modify(id, next) {
     this.throw(404, 'post with id = ' + id + ' was not found');
   }
 
-  var updated = posts.updateById(id, {$set: data});
+  var updated = yield posts.updateById(id, {$set: data});
 
   if (!updated) {
     this.throw(405, "Unable to update.");
   } else {
-    this.body = "Done";
+    this.body = yield posts.findById(id);
   }
 };
 

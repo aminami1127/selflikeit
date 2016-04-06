@@ -2,7 +2,7 @@ var supertest = require("supertest");
 var should = require("should");
 var server = supertest.agent("http://localhost:1337");
 
-var _id = 'ffffffffffffffffffffffff';
+var _id = '';
 
 describe("POSTS CRUD REST API", function(){
 
@@ -11,11 +11,12 @@ describe("POSTS CRUD REST API", function(){
   it("should create a post with status 201", function(done){
     server
     .post("/posts/")
-    .send({'_id': _id, 'text': 'foo', 'date': '2016-04-01T20:00:00', 'like': 10, 'user_id': 'test'})
+    .send({'text': 'foo', 'date': '2016-04-01T20:00:00', 'like': 10, 'user_id': 'test'})
     .expect("Content-type", /json/)
     .expect(201)
     .end(function(err, res){
       should.not.exist(err);
+      _id = res.body._id;
       done();
     });
   });

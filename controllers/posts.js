@@ -39,6 +39,7 @@ module.exports.add = function* add(data, next) {
     this.throw(405, "The post couldn't be added.");
   }
   this.body = inserted;
+  this.status = 201;
 };
 
 
@@ -76,5 +77,6 @@ module.exports.remove = function* remove(id, next) {
     this.throw(405, "Unable to delete.");
   } else {
     this.body = "Done";
+    this.status = 204;
   }
 };

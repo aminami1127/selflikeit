@@ -13,6 +13,9 @@
       "koa-static": "^2.0.0",
       "monk": "^1.0.0"
     },
+    "dependencies": {
+      "alt": "npm:alt@^0.18.4"
+    },
     "devDependencies": {
       "babel": "npm:babel-core@^5.8.24",
       "babel-runtime": "npm:babel-runtime@^5.8.24",
